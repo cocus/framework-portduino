@@ -72,6 +72,10 @@ public:
 
     virtual size_t printTo(Print& p) const;
 
+    String toString() const;
+
+    static int hostByName(const char *host, IPAddress & dst);
+
     friend class UDP;
     friend class Client;
     friend class Server;

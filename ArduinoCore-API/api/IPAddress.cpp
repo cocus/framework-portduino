@@ -19,6 +19,7 @@
 
 #include "IPAddress.h"
 #include "Print.h"
+#include <netdb.h> // gethostbyname
 
 using namespace arduino;
 
@@ -116,4 +117,30 @@ size_t IPAddress::printTo(Print& p) const
     return n;
 }
 
+String IPAddress::toString(void) const
+{
+  char buffer[64];
+  ::sprintf(buffer, "%d.%d.%d.%d",
+    _address.bytes[0],
+    _address.bytes[1],
+    _address.bytes[2],
+    _address.bytes[3]);
+  return String(buffer);
+}
+
+int IPAddress::hostByName(const char *host, IPAddress & dst)
+{
+  struct hostent *dns = gethostbyname(host);
+  if (!dns) {
+    ::printf("ERR IPAddress: Hostname lookup failed %s\n", host);
+    return 0;
+  }
+
+  struct in_addr ip = *((struct in_addr *)dns->h_addr);
+  dst = ip.s_addr;
+
+  return 1;
+}
+
+#undef INADDR_NONE
 const IPAddress arduino::INADDR_NONE(0,0,0,0);
